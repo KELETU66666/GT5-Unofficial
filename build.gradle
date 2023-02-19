@@ -49,11 +49,12 @@ repositories {
     }
     maven {
         name = "CurseForge"
-        url = "https://minecraft.curseforge.com/api/maven/"
+        url = "https://www.cursemaven.com"
     }
 }
 
 dependencies {
+    deobfCompile "curse.maven:industrial-foregoing-266515:2745321"
     deobfCompile("net.sengir.forestry:forestry_${config.minecraft.version}:${config.forestry.version}") {
         transitive = false
     }
