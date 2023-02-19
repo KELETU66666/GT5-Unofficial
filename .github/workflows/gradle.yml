@@ -1,28 +1,9 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
-
-name: Java CI with Gradle
-
+name: mod-build
 on:
-  push:
-    branches: [ "1.12.2" ]
-  pull_request:
-    branches: [ "1.12.2" ]
-
-permissions:
-  contents: read
-
+  push
 jobs:
   build:
     runs-on: ubuntu-20.04
-    env:
-      DL_URL: https://github.com/KELETU66666/GT5-Unofficial/archive/refs/heads/1.12.2.zip
-      Pack_Name: 1.12.2
-      Open_Pack_Name: GT5-Unofficial-1.12.2
     steps:
     - uses: actions/checkout@v2
     - name: Setup Java JDK 11
@@ -42,10 +23,21 @@ jobs:
       with: 
         java-version: '8'
         distribution: 'temurin'
-        java-package: jdk
+        java-package: jdk 
+    - uses: actions/cache@v3
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+    - name: build
+      run: |
+        sh ./gradlew build --build-cache --refresh-dependencies -Dfile.encoding=UTF-8 --info
+        cp -rf ./build/libs /opt/build
     - name : Upload packages
-      uses: actions/upload-artifact@master
-      if: always()
+      uses: actions/upload-artifact@v3
       with:
         name: output
         path: /opt/libs/
